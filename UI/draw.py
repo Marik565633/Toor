@@ -1,7 +1,40 @@
 import cv2
+import math
 
-def draw_tool(image, tool, x, y, radius=15):
+
+def draw_tool(image, tool, x, y, size=15, angle=0):
+
     if tool == "circle":
-        cv2.circle(image, (x, y), radius, (0, 255, 0), 2)
+
+        cv2.circle(
+            image,
+            (x, y),
+            size,
+            (0, 255, 0),
+            2
+        )
+
     elif tool == "line":
-        cv2.line(image, (x, y), (x + radius, y + radius), (0, 255, 0), 2)
+
+        radians = math.radians(angle)
+
+        dx = (size / 2) * math.cos(radians)
+        dy = (size / 2) * math.sin(radians)
+
+        start_point = (
+            int(x - dx),
+            int(y - dy)
+        )
+
+        end_point = (
+            int(x + dx),
+            int(y + dy)
+        )
+
+        cv2.line(
+            image,
+            start_point,
+            end_point,
+            (0, 255, 0),
+            2
+        )

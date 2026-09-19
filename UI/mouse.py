@@ -9,6 +9,9 @@ def mouse_callback(event, x, y, flags, param):
     circles = param["circles"]
     lines = param["lines"]
 
+    # =========================
+    # CIRCLE TOOL
+    # =========================
     if tool == "circle":
 
         if event == cv2.EVENT_LBUTTONDOWN:
@@ -63,15 +66,95 @@ def mouse_callback(event, x, y, flags, param):
             if circle is not None:
 
                 if flags > 0:
+
                     circle["radius"] += 2
+
                 else:
+
                     circle["radius"] = max(
                         5,
                         circle["radius"] - 2
                     )
 
+    # =========================
+    # LINE TOOL
+    # =========================
     elif tool == "line":
 
         if event == cv2.EVENT_LBUTTONDOWN:
 
-            lines.append((x, y))
+            selected = None
+
+            for line in lines:
+
+                left_edge = line["x"] - line["length"] // 2
+                right_edge = line["x"] + line["length"] // 2
+
+                if (
+                    abs(y - line["y"]) < 10
+                    and
+                    left_edge <= x <= right_edge
+                ):
+
+                    selected = line
+                    break
+
+            if selected is not None:
+
+                print("LINE SELECTED")
+
+                param["selected_line"] = selected
+                param["dragging_line"] = True
+
+            else:
+
+                lines.append(
+                    {
+                        "x": x,
+                        "y": y,
+                        "length": 30,
+                        "angle": 0
+                    }
+                )
+
+        elif event == cv2.EVENT_MOUSEMOVE:
+
+            if param["dragging_line"]:
+
+                line = param["selected_line"]
+
+                line["x"] = x
+                line["y"] = y
+
+        elif event == cv2.EVENT_LBUTTONUP:
+
+            param["dragging_line"] = False
+            param["selected_line"] = None
+
+        elif event == cv2.EVENT_MOUSEWHEEL:
+
+            line = param["selected_line"]
+
+            if line is not None:
+
+                # CTRL + Wheel = Rotate
+                if flags & cv2.EVENT_FLAG_CTRLKEY:
+
+                    if flags > 0:
+                        line["angle"] += 5
+                    else:
+                        line["angle"] -= 5
+
+                # Wheel only = Resize
+                else:
+
+                    if flags > 0:
+
+                        line["length"] += 5
+
+                    else:
+
+                        line["length"] = max(
+                            10,
+                            line["length"] - 5
+                        )

@@ -11,20 +11,28 @@ def display_image(image_paths):
     current_frame = 0
     scale = 0.4
     current_tool = "circle"
+
     circles = [
-    {
-        "x": 100,
-        "y": 200,
-        "radius": 20
-    }]
+        {
+            "x": 100,
+            "y": 200,
+            "radius": 20
+        }
+    ]
+
     lines = []
+
     state = {
-    "circles": circles,
-    "lines": lines,
-    "tool": current_tool,
-    "selected_circle": None,
-    "dragging": False
-}
+        "circles": circles,
+        "lines": lines,
+        "tool": current_tool,
+
+        "selected_circle": None,
+        "dragging": False,
+
+        "selected_line": None,
+        "dragging_line": False
+    }
 
     cv2.namedWindow("Image")
 
@@ -35,6 +43,7 @@ def display_image(image_paths):
     )
 
     while True:
+
         # Load current image
         image = load_image(
             image_paths[current_frame].name
@@ -55,6 +64,8 @@ def display_image(image_paths):
             (new_w, new_h),
             interpolation=cv2.INTER_AREA
         )
+
+        # Draw circles
         for circle in circles:
 
             color = (0, 255, 0)
@@ -63,34 +74,35 @@ def display_image(image_paths):
                 color = (0, 0, 255)
 
             cv2.circle(
-            display,
-            (circle["x"], circle["y"]),
-        circle["radius"],
-        color,
-        2
-    )
+                display,
+                (circle["x"], circle["y"]),
+                circle["radius"],
+                color,
+                2
+            )
 
-        for x, y in lines:
+        # Draw lines
+        for line in lines:
 
-         draw_tool(
-        display,
-        "line",
-        x,
-        y
-        )
-    
+            draw_tool(
+                display,
+                "line",
+                line["x"],
+                line["y"],
+                line["length"],
+                line["angle"]
+            )
+
         cv2.imshow("Image", display)
 
         key = cv2.waitKeyEx(20)
 
         if key != -1:
 
-            print("Key =", key)
-
             result = handle_key(
                 key,
                 current_frame,
-                len(image_paths), 
+                len(image_paths),
                 current_tool
             )
 
@@ -99,7 +111,9 @@ def display_image(image_paths):
 
             current_frame = result[0]
             current_tool = result[1]
+
             state["tool"] = current_tool
+
             print("Current frame:", current_frame)
             print("Current tool:", current_tool)
 
