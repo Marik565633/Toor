@@ -1,6 +1,6 @@
 import cv2
 
-def draw_tool(image, tool, x, y, radius=5):
+def draw_tool(image, tool, x, y, radius=15):
     if tool == "circle":
         cv2.circle(image, (x, y), radius, (0, 255, 0), 2)
     elif tool == "line":

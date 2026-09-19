@@ -11,22 +11,30 @@ def display_image(image_paths):
     current_frame = 0
     scale = 0.4
     current_tool = "circle"
-    circles = []
+    circles = [
+    {
+        "x": 100,
+        "y": 200,
+        "radius": 20
+    }]
     lines = []
+    state = {
+    "circles": circles,
+    "lines": lines,
+    "tool": current_tool,
+    "selected_circle": None,
+    "dragging": False
+}
+
+    cv2.namedWindow("Image")
+
+    cv2.setMouseCallback(
+        "Image",
+        mouse_callback,
+        state
+    )
+
     while True:
-        cv2.namedWindow("Image")
-
-        state = {
-          "circles": circles,
-             "lines": lines,
-             "tool": current_tool
-            }
-
-        cv2.setMouseCallback(
-             "Image",
-              mouse_callback,
-              state
-                )
         # Load current image
         image = load_image(
             image_paths[current_frame].name
@@ -47,14 +55,20 @@ def display_image(image_paths):
             (new_w, new_h),
             interpolation=cv2.INTER_AREA
         )
-        for x, y in circles:
+        for circle in circles:
 
-            draw_tool(
+            color = (0, 255, 0)
+
+            if state["selected_circle"] is circle:
+                color = (0, 0, 255)
+
+            cv2.circle(
             display,
-             "circle",
-              x,
-          y
-          )
+            (circle["x"], circle["y"]),
+        circle["radius"],
+        color,
+        2
+    )
 
         for x, y in lines:
 
