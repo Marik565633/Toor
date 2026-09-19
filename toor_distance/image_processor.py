@@ -13,7 +13,6 @@ def load_image(filename='img-00000-00008.jpg', data_dir=DATA_DIR):
 
     file_path = data_dir / filename
     img = Image.open(file_path)
-    print(img)
     return np.array(img)
 if __name__ == "__main__":
     load_image()

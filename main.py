@@ -1,15 +1,17 @@
 # main.py
 
-from toor_distance.image_processor import load_image
+from pathlib import Path
 from UI.view import display_image
+
 
 def main():
 
-    img = load_image()
+    image_paths = sorted(
+        Path("data").glob("*.jpg")
+    )
 
-    print(img.shape)
-    
-    display_image(img)
+    display_image(image_paths)
+
 
 if __name__ == "__main__":
     main()
