@@ -1,11 +1,15 @@
 import cv2
+from UI.draw import draw_tool
+
 
 def mouse_callback(event, x, y, flags, param):
+
     if event == cv2.EVENT_LBUTTONDOWN:
-        print("Left click at:", x, y)
 
-    elif event == cv2.EVENT_RBUTTONDOWN:
-        print("Right click at:", x, y)
+        if param["tool"] == "circle":
 
-    elif event == cv2.EVENT_MOUSEMOVE:
-        print("Mouse moved to:", x, y)
+            param["circles"].append((x, y))
+
+        elif param["tool"] == "line":
+
+            param["lines"].append((x, y))
