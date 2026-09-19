@@ -5,18 +5,14 @@ from UI.keyboard import handle_key
 from UI.mouse import mouse_callback
 
 
-cv2.setMouseCallback("Image", mouse_callback)
-
-
 def display_image(image_paths):
 
     current_frame = 0
     scale = 0.4
     current_tool = "circle"
-    cv2.setMouseCallback("Image", mouse_callback)
-
     while True:
-
+        cv2.namedWindow("Image")
+        cv2.setMouseCallback("Image", mouse_callback)
         # Load current image
         image = load_image(
             image_paths[current_frame].name
