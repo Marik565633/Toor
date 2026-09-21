@@ -12,19 +12,15 @@ def display_image(image_paths):
     scale = 0.4
     current_tool = "circle"
 
-    circles = [
-        {
-            "x": 100,
-            "y": 200,
-            "radius": 20
-        }
-    ]
-
-    lines = []
+    annotations = {}
+    frame_annotations = annotations.setdefault(
+        current_frame,
+        {"circles": [], "lines": []}
+    )
 
     state = {
-        "circles": circles,
-        "lines": lines,
+        "circles": frame_annotations["circles"],
+        "lines": frame_annotations["lines"],
         "tool": current_tool,
 
         "selected_circle": None,
@@ -43,6 +39,13 @@ def display_image(image_paths):
     )
 
     while True:
+
+        frame_annotations = annotations.setdefault(
+            current_frame,
+            {"circles": [], "lines": []}
+        )
+        state["circles"] = frame_annotations["circles"]
+        state["lines"] = frame_annotations["lines"]
 
         # Load current image
         image = load_image(
@@ -66,7 +69,7 @@ def display_image(image_paths):
         )
 
         # Draw circles
-        for circle in circles:
+        for circle in state["circles"]:
 
             color = (0, 255, 0)
 
@@ -82,7 +85,7 @@ def display_image(image_paths):
             )
 
         # Draw lines
-        for line in lines:
+        for line in state["lines"]:
 
             draw_tool(
                 display,
@@ -103,16 +106,24 @@ def display_image(image_paths):
                 key,
                 current_frame,
                 len(image_paths),
-                current_tool
+                current_tool,
+                state
             )
 
             if result is None:
                 break
 
+            previous_frame = current_frame
             current_frame = result[0]
             current_tool = result[1]
 
             state["tool"] = current_tool
+
+            if current_frame != previous_frame:
+                state["selected_circle"] = None
+                state["dragging"] = False
+                state["selected_line"] = None
+                state["dragging_line"] = False
 
             print("Current frame:", current_frame)
             print("Current tool:", current_tool)
