@@ -19,6 +19,8 @@ def display_image(image_paths):
     )
 
     state = {
+        "annotations": annotations,
+        "scale": scale,
         "circles": frame_annotations["circles"],
         "lines": frame_annotations["lines"],
         "tool": current_tool,
@@ -78,8 +80,11 @@ def display_image(image_paths):
 
             cv2.circle(
                 display,
-                (circle["x"], circle["y"]),
-                circle["radius"],
+                (
+                    int(round(circle["x"] * scale)),
+                    int(round(circle["y"] * scale))
+                ),
+                max(1, int(round(circle["radius"] * scale))),
                 color,
                 2
             )
@@ -90,9 +95,9 @@ def display_image(image_paths):
             draw_tool(
                 display,
                 "line",
-                line["x"],
-                line["y"],
-                line["length"],
+                int(round(line["x"] * scale)),
+                int(round(line["y"] * scale)),
+                int(round(line["length"] * scale)),
                 line["angle"]
             )
 

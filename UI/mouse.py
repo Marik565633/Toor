@@ -5,6 +5,9 @@ import math
 def mouse_callback(event, x, y, flags, param):
 
     tool = param["tool"]
+    scale = param["scale"]
+    image_x = int(round(x / scale))
+    image_y = int(round(y / scale))
 
     circles = param["circles"]
     lines = param["lines"]
@@ -21,8 +24,8 @@ def mouse_callback(event, x, y, flags, param):
             for circle in circles:
 
                 distance = math.sqrt(
-                    (x - circle["x"]) ** 2 +
-                    (y - circle["y"]) ** 2
+                    (image_x - circle["x"]) ** 2 +
+                    (image_y - circle["y"]) ** 2
                 )
 
                 if distance <= circle["radius"]:
@@ -39,9 +42,9 @@ def mouse_callback(event, x, y, flags, param):
 
                 circles.append(
                     {
-                        "x": x,
-                        "y": y,
-                        "radius": 20
+                        "x": image_x,
+                        "y": image_y,
+                        "radius": int(round(20 / scale))
                     }
                 )
 
@@ -51,8 +54,8 @@ def mouse_callback(event, x, y, flags, param):
 
                 circle = param["selected_circle"]
 
-                circle["x"] = x
-                circle["y"] = y
+                circle["x"] = image_x
+                circle["y"] = image_y
 
         elif event == cv2.EVENT_LBUTTONUP:
 
@@ -67,13 +70,13 @@ def mouse_callback(event, x, y, flags, param):
 
                 if flags > 0:
 
-                    circle["radius"] += 2
+                    circle["radius"] += int(round(2 / scale))
 
                 else:
 
                     circle["radius"] = max(
-                        5,
-                        circle["radius"] - 2
+                        int(round(5 / scale)),
+                        circle["radius"] - int(round(2 / scale))
                     )
 
     # =========================
@@ -91,9 +94,9 @@ def mouse_callback(event, x, y, flags, param):
                 right_edge = line["x"] + line["length"] // 2
 
                 if (
-                    abs(y - line["y"]) < 10
+                    abs(image_y - line["y"]) < int(round(10 / scale))
                     and
-                    left_edge <= x <= right_edge
+                    left_edge <= image_x <= right_edge
                 ):
 
                     selected = line
@@ -110,9 +113,9 @@ def mouse_callback(event, x, y, flags, param):
 
                 lines.append(
                     {
-                        "x": x,
-                        "y": y,
-                        "length": 30,
+                        "x": image_x,
+                        "y": image_y,
+                        "length": int(round(30 / scale)),
                         "angle": 0
                     }
                 )
@@ -123,8 +126,8 @@ def mouse_callback(event, x, y, flags, param):
 
                 line = param["selected_line"]
 
-                line["x"] = x
-                line["y"] = y
+                line["x"] = image_x
+                line["y"] = image_y
 
         elif event == cv2.EVENT_LBUTTONUP:
 
@@ -150,11 +153,11 @@ def mouse_callback(event, x, y, flags, param):
 
                     if flags > 0:
 
-                        line["length"] += 5
+                        line["length"] += int(round(5 / scale))
 
                     else:
 
                         line["length"] = max(
-                            10,
-                            line["length"] - 5
+                            int(round(10 / scale)),
+                            line["length"] - int(round(5 / scale))
                         )
